@@ -1,9 +1,12 @@
-name: Build and Push Docker Image
+name: Build and Push Docker Image (Backend)
 
 on:
   push:
     branches:
       - main
+    paths:
+      - "cmd/**"
+      - "internal/**"
 
 jobs:
   build:
