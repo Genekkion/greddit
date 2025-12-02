@@ -2,70 +2,81 @@ package auth
 
 import (
 	"greddit/internal/domains/shared"
-	"greddit/internal/util/set"
+	"strings"
 
 	"github.com/google/uuid"
 )
 
-type UserId uuid.UUID
+const (
+	usernameMinLength = 3
+	usernameMaxLength = 32
+)
+
+type UserId = uuid.UUID
 
 // User represents a user in the system. Should be reused across
 // all sub applications.
 type User struct {
 	shared.Base
 
-	Id UserId `json:"id"`
-
-	Role Role `json:"role"`
+	UserValue
+	UserMetadata
 }
 
-type Role string
-
-const (
-	RoleAdmin Role = "admin"
-	RoleUser  Role = "user"
-)
-
-var (
-	allowedRoles = set.New[Role](set.WithSlice([]Role{
-		RoleAdmin,
-		RoleUser,
-	}))
-)
-
-// InvalidRoleError is returned when a role is invalid.
-type InvalidRoleError struct {
-	value string
+// UserValue represents the value of a user.
+type UserValue struct {
+	Username string `json:"username"`
+	Role     Role   `json:"role"`
 }
 
-// Error implements the error interface.
-func (e InvalidRoleError) Error() string {
-	return "invalid role value: " + e.value
-}
+// Validate checks that the user value is valid.
+func (v UserValue) Validate() (err error) {
+	{
+		username := v.Username
+		username = strings.TrimSpace(username)
+		if username == "" {
 
-// Validate checks that the role is valid.
-func (r Role) Validate() (err error) {
-	if !allowedRoles.Contains(r) {
-		return InvalidRoleError{
-			value: string(r),
 		}
 	}
+
+	{
+		role := v.Role
+		err = role.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
+// UserMetadata represents metadata about a user.
+type UserMetadata struct {
+	Id UserId `json:"id"`
+}
+
+// InvalidUserParamsError represents an error when creating a user with invalid parameters.
+type InvalidUserParamsError struct {
+	reason string
+}
+
+// Error implements the error interface.
+func (e InvalidUserParamsError) Error() string {
+	return "invalid user params: " + e.reason
+}
+
 // NewUser creates a new user.
-func NewUser(id UserId, role Role, base shared.Base) (user *User, err error) {
-	if !allowedRoles.Contains(role) {
-		return nil, InvalidRoleError{
-			value: string(role),
-		}
+func NewUser(value UserValue, metadata UserMetadata, base shared.Base) (user *User, err error) {
+	err = value.Validate()
+	if err != nil {
+		return nil, err
 	}
 
 	user = &User{
 		Base: base,
 
-		Id:   id,
-		Role: role,
+		UserValue:    value,
+		UserMetadata: metadata,
 	}
 
 	return user, nil
