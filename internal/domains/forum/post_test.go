@@ -1,11 +1,12 @@
 package forum
 
 import (
-	"greddit/internal/domains/shared"
-	"greddit/internal/test"
 	"strings"
 	"testing"
 	"time"
+
+	"greddit/internal/domains/shared"
+	"greddit/internal/test"
 
 	"github.com/google/uuid"
 )

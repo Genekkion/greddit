@@ -2,9 +2,10 @@ package set
 
 import (
 	"fmt"
-	"greddit/internal/test"
 	"slices"
 	"testing"
+
+	"greddit/internal/test"
 )
 
 func Test_NewSet(t *testing.T) {

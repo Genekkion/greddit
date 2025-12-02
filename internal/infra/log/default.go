@@ -19,7 +19,7 @@ var (
 
 		logPath, exists := os.LookupEnv("LOG_FILE")
 		if exists {
-			file, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+			file, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
 			if err != nil {
 				stdOutLogger.Error("Unable to open log file",
 					"path", logPath,

@@ -10,12 +10,10 @@ const (
 	RoleUser  Role = "user"
 )
 
-var (
-	allowedRoles = set.New[Role](set.WithSlice([]Role{
-		RoleAdmin,
-		RoleUser,
-	}))
-)
+var allowedRoles = set.New[Role](set.WithSlice([]Role{
+	RoleAdmin,
+	RoleUser,
+}))
 
 // InvalidRoleError is returned when a role is invalid.
 type InvalidRoleError struct {

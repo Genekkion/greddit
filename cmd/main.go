@@ -2,16 +2,15 @@ package main
 
 import (
 	"context"
+	"log/slog"
+	"os"
+
 	"greddit/internal/env"
 	"greddit/internal/infra/db/postgres"
 	"greddit/internal/infra/log"
-	"log/slog"
-	"os"
 )
 
-var (
-	pgConnStr = env.GetStringEnvOrFatal("PGSQL_CONN_STR")
-)
+var pgConnStr = env.GetStringEnvOrFatal("PGSQL_CONN_STR")
 
 func main() {
 	defer log.CleanupDefaultLogger()

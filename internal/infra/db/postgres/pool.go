@@ -36,10 +36,8 @@ func New(ctx context.Context, connString string) (*pgxpool.Pool, error) {
 	return pool, nil
 }
 
-var (
-	// sqlFilePattern matches the file name pattern for SQL files.
-	sqlFilePattern = regexp.MustCompile(`^(\d+)_.*\.sql$`)
-)
+// sqlFilePattern matches the file name pattern for SQL files.
+var sqlFilePattern = regexp.MustCompile(`^(\d+)_.*\.sql$`)
 
 // getSqlFileNames returns the list of SQL file names.
 func getSqlFileNames() (fileNames []string, err error) {
