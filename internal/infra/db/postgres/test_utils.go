@@ -8,7 +8,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/wait"
+	pg "github.com/testcontainers/testcontainers-go/modules/postgres"
 )
 
 var (
@@ -19,6 +19,7 @@ var (
 	}
 	tables = []string{
 		"auth_users",
+		"forum_communities",
 	}
 )
 
@@ -27,30 +28,20 @@ func NewTestPool(t *testing.T) (pool *pgxpool.Pool, cleanup func()) {
 	t.Helper()
 
 	ctx := t.Context()
-	req := testcontainers.ContainerRequest{
-		Image: "postgres:18.0-trixie",
-		Env:   postgresEnv,
-		ExposedPorts: []string{
-			"5432/tcp",
-		},
-		WaitingFor: wait.ForAll(
-			wait.ForListeningPort(
-				"5432/tcp",
-			).WithStartupTimeout(30*time.Second),
-			wait.ForLog(
-				"database system is ready to accept connections",
-			),
-		),
-	}
-
-	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
-		ContainerRequest: req,
-		Started:          true,
-	})
+	container, err := pg.Run(ctx,
+		"postgres:18.1-alpine",
+		pg.WithUsername(postgresEnv["POSTGRES_USER"]),
+		pg.WithPassword(postgresEnv["POSTGRES_PASSWORD"]),
+		pg.WithDatabase(postgresEnv["POSTGRES_DB"]),
+		pg.BasicWaitStrategies(),
+	)
 	test.NilErr(t, err)
 
 	cleanup = func() {
-		testcontainers.CleanupContainer(t, container)
+		err := testcontainers.TerminateContainer(container)
+		if err != nil {
+			fmt.Println("failed to terminate container", err)
+		}
 	}
 
 	host, err := container.Host(ctx)
@@ -88,6 +79,7 @@ loop:
 
 			err = Init(pool, ctx)
 			if err == nil {
+				fmt.Println("successfully connected to postgres")
 				break loop
 			} else {
 				fmt.Println("failed to init postgres", err)

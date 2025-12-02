@@ -1,6 +1,6 @@
 CREATE TYPE auth_role AS ENUM ('admin', 'user');
 
-CREATE TABLE IF NOT EXISTS auth_users
+CREATE TABLE auth_users
 (
     id           UUID PRIMARY KEY             DEFAULT gen_random_uuid(),
     created_at   TIMESTAMPTZ         NOT NULL DEFAULT NOW(),
