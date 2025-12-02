@@ -2,11 +2,12 @@ package forumdb
 
 import (
 	"fmt"
+	"testing"
+	"time"
+
 	"greddit/internal/domains/forum"
 	"greddit/internal/infra/db/postgres"
 	"greddit/internal/test"
-	"testing"
-	"time"
 )
 
 func TestCommunitiesRepo_CreateCommunity(t *testing.T) {

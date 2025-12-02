@@ -2,8 +2,9 @@ package dbportsforum
 
 import (
 	"context"
-	"greddit/internal/domains/forum"
 	"time"
+
+	"greddit/internal/domains/forum"
 )
 
 // CommunitiesRepo is a repository for communities.

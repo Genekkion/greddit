@@ -2,9 +2,10 @@ package forumdb
 
 import (
 	"context"
+	"time"
+
 	"greddit/internal/domains/forum"
 	"greddit/internal/infra/db/postgres"
-	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -54,7 +55,8 @@ func (r CommunitiesRepo) GetCommunityById(ctx context.Context, id forum.Communit
 }
 
 func (r CommunitiesRepo) GetAllCommunitiesSortedByName(ctx context.Context, limit int, offset int) (
-	communities []forum.Community, err error) {
+	communities []forum.Community, err error,
+) {
 	const stmt = "SELECT id, name, description, created_at, updated_at FROM forum_communities WHERE deleted_at IS NULL ORDER BY name LIMIT $1 OFFSET $2"
 	args := []any{limit, offset}
 
@@ -62,7 +64,8 @@ func (r CommunitiesRepo) GetAllCommunitiesSortedByName(ctx context.Context, limi
 }
 
 func (r CommunitiesRepo) GetAllCommunitiesSortedByCreatedAt(ctx context.Context, limit int, offset int) (
-	communities []forum.Community, err error) {
+	communities []forum.Community, err error,
+) {
 	const stmt = "SELECT id, name, description, created_at, updated_at FROM forum_communities WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2"
 	args := []any{limit, offset}
 
@@ -70,7 +73,8 @@ func (r CommunitiesRepo) GetAllCommunitiesSortedByCreatedAt(ctx context.Context,
 }
 
 func (r CommunitiesRepo) GetAllCommunitiesSortedByUpdatedAt(ctx context.Context, limit int, offset int) (
-	communities []forum.Community, err error) {
+	communities []forum.Community, err error,
+) {
 	const stmt = "SELECT id, name, description, created_at, updated_at FROM forum_communities WHERE deleted_at IS NULL ORDER BY updated_at DESC LIMIT $1 OFFSET $2"
 	args := []any{limit, offset}
 
