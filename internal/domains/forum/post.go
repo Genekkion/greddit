@@ -31,8 +31,6 @@ type PostMetadata struct {
 
 	PosterId    auth.UserId `json:"poster_id"`
 	CommunityId CommunityId `json:"community_id"`
-
-	UpvoteCount int `json:"upvote_count"`
 }
 
 // PostValue represents the value of a post.
