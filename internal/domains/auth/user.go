@@ -1,15 +1,12 @@
 package auth
 
 import (
+	"fmt"
 	"greddit/internal/domains/shared"
 	"strings"
+	"unicode"
 
 	"github.com/google/uuid"
-)
-
-const (
-	usernameMinLength = 3
-	usernameMaxLength = 32
 )
 
 type UserId = uuid.UUID
@@ -25,9 +22,22 @@ type User struct {
 
 // UserValue represents the value of a user.
 type UserValue struct {
-	Username string `json:"username"`
-	Role     Role   `json:"role"`
+	Username    string `json:"username"`
+	DisplayName string `json:"display_name"`
+	Role        Role   `json:"role"`
 }
+
+const (
+	nameMinLength = 3
+	nameMaxLength = 32
+)
+
+var (
+	allowedUsernameChars = []*unicode.RangeTable{
+		unicode.Letter,
+		unicode.Digit,
+	}
+)
 
 // Validate checks that the user value is valid.
 func (v UserValue) Validate() (err error) {
@@ -35,7 +45,34 @@ func (v UserValue) Validate() (err error) {
 		username := v.Username
 		username = strings.TrimSpace(username)
 		if username == "" {
+			return InvalidUserParamsError{
+				reason: "username cannot be empty",
+			}
+		} else if len(username) < nameMinLength || len(username) > nameMaxLength {
+			return InvalidUserParamsError{
+				reason: fmt.Sprintf("username must be between %d and %d characters", nameMinLength, nameMaxLength),
+			}
+		}
+		for _, r := range username {
+			if !unicode.IsOneOf(allowedUsernameChars, r) {
+				return InvalidUserParamsError{
+					reason: "username contains invalid characters",
+				}
+			}
+		}
+	}
 
+	{
+		displayName := v.DisplayName
+		displayName = strings.TrimSpace(displayName)
+		if displayName == "" {
+			return InvalidUserParamsError{
+				reason: "display name cannot be empty",
+			}
+		} else if len(displayName) > nameMaxLength {
+			return InvalidUserParamsError{
+				reason: fmt.Sprintf("display name must be less than %d characters", nameMaxLength),
+			}
 		}
 	}
 
