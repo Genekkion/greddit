@@ -108,8 +108,8 @@ func Init(pool *pgxpool.Pool, ctx context.Context) error {
 			return nil
 		}
 	}
-
-	return applyMigrations(pool, ctx, fileNames[*count:])
+	fileNames = fileNames[*count:]
+	return applyMigrations(pool, ctx, fileNames)
 }
 
 // getKey returns the migration key from the file name.

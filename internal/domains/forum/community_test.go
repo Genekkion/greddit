@@ -36,8 +36,6 @@ func TestNewCommunity(t *testing.T) {
 			CommunityValue:    value,
 			CommunityMetadata: metadata,
 		}
-		// MemberCount should be initialized to 0
-		expected.MemberCount = 0
 
 		test.AssertEqual(t, "Community not as expected", expected, *community)
 	})
