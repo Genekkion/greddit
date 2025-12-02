@@ -33,7 +33,6 @@ type CommunityValue struct {
 // Validate checks that the community value is valid.
 func (v CommunityValue) Validate() error {
 	{
-
 		name := v.Name
 		name = strings.TrimSpace(name)
 		if name == "" {
@@ -68,6 +67,7 @@ func (v CommunityValue) Validate() error {
 	return nil
 }
 
+// CommunityMetadata represents metadata about a community.
 type CommunityMetadata struct {
 	Id          CommunityId `json:"id"`
 	MemberCount int         `json:"member_count"`
