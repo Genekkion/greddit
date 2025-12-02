@@ -14,7 +14,7 @@ const (
 	communityMaxDescriptionLength = 2048
 )
 
-type CommunityId uuid.UUID
+type CommunityId = uuid.UUID
 
 // Community represents a community, i.e. a subreddit.
 type Community struct {

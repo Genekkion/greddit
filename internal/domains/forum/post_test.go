@@ -1,7 +1,6 @@
 package forum
 
 import (
-	"greddit/internal/domains/auth"
 	"greddit/internal/domains/shared"
 	"greddit/internal/test"
 	"strings"
@@ -20,9 +19,9 @@ func TestNewPost(t *testing.T) {
 			Body:  "Go is a great programming language for building scalable systems. Here's why...",
 		}
 		metadata := PostMetadata{
-			Id:          PostId(uuid.New()),
-			PosterId:    auth.UserId(uuid.New()),
-			CommunityId: CommunityId(uuid.New()),
+			Id:          uuid.New(),
+			PosterId:    uuid.New(),
+			CommunityId: uuid.New(),
 			UpvoteCount: 0,
 		}
 		tt := time.Date(2025, 10, 10, 12, 0, 0, 0, time.UTC)
@@ -120,9 +119,9 @@ func TestNewPost(t *testing.T) {
 				t.Parallel()
 
 				metadata := PostMetadata{
-					Id:          PostId(uuid.New()),
+					Id:          uuid.New(),
 					PosterId:    uuid.New(),
-					CommunityId: CommunityId(uuid.New()),
+					CommunityId: uuid.New(),
 					UpvoteCount: 0,
 				}
 				tt := time.Date(2025, 10, 10, 12, 0, 0, 0, time.UTC)

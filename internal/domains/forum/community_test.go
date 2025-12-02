@@ -18,7 +18,7 @@ func TestNewCommunity(t *testing.T) {
 			Description: "A community for Go programming language enthusiasts",
 		}
 		metadata := CommunityMetadata{
-			Id: CommunityId(uuid.New()),
+			Id: uuid.New(),
 		}
 		tt := time.Date(2025, 10, 10, 12, 0, 0, 0, time.UTC)
 		base := shared.Base{
@@ -117,7 +117,7 @@ func TestNewCommunity(t *testing.T) {
 				t.Parallel()
 
 				metadata := CommunityMetadata{
-					Id: CommunityId(uuid.New()),
+					Id: uuid.New(),
 				}
 				tt := time.Date(2025, 10, 10, 12, 0, 0, 0, time.UTC)
 				base := shared.Base{

@@ -14,7 +14,7 @@ const (
 	postMaxBodyLength  = 1024 * 1024
 )
 
-type PostId uuid.UUID
+type PostId = uuid.UUID
 
 // Post represents a post in a community.
 type Post struct {

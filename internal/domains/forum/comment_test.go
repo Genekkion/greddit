@@ -1,7 +1,6 @@
 package forum
 
 import (
-	"greddit/internal/domains/auth"
 	"greddit/internal/domains/shared"
 	"greddit/internal/test"
 	"strings"
@@ -19,9 +18,9 @@ func TestNewComment(t *testing.T) {
 			Body: "This is a great post! Thanks for sharing.",
 		}
 		metadata := CommentMetadata{
-			Id:     CommentId(uuid.New()),
-			UserId: auth.UserId(uuid.New()),
-			PostId: PostId(uuid.New()),
+			Id:     uuid.New(),
+			UserId: uuid.New(),
+			PostId: uuid.New(),
 		}
 		tt := time.Date(2025, 10, 10, 12, 0, 0, 0, time.UTC)
 		base := shared.Base{
@@ -79,9 +78,9 @@ func TestNewComment(t *testing.T) {
 				t.Parallel()
 
 				metadata := CommentMetadata{
-					Id:     CommentId(uuid.New()),
-					UserId: auth.UserId(uuid.New()),
-					PostId: PostId(uuid.New()),
+					Id:     uuid.New(),
+					UserId: uuid.New(),
+					PostId: uuid.New(),
 				}
 				tt := time.Date(2025, 10, 10, 12, 0, 0, 0, time.UTC)
 				base := shared.Base{

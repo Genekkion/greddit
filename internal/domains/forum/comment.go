@@ -13,7 +13,7 @@ const (
 	commentMaxBodyLength = 1024 * 1024
 )
 
-type CommentId uuid.UUID
+type CommentId = uuid.UUID
 
 // Comment represents a comment on a post.
 type Comment struct {
