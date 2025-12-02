@@ -48,9 +48,10 @@ func (v CommentValue) Validate() error {
 
 // CommentMetadata represents metadata about a comment.
 type CommentMetadata struct {
-	Id     CommentId   `json:"id"`
-	UserId auth.UserId `json:"user_id"`
-	PostId PostId      `json:"post_id"`
+	Id          CommentId   `json:"id"`
+	CommenterId auth.UserId `json:"commenter_id"`
+	PostId      PostId      `json:"post_id"`
+	ParentId    *CommentId  `json:"parent_id"`
 }
 
 // InvalidCommentParamsError represents an error when creating a comment with invalid parameters.
