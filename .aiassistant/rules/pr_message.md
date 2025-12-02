@@ -65,7 +65,9 @@ When reviewing or creating a PR message, verify:
 
 ## Summary
 
-Add user authentication middleware to protect admin endpoints. This change implements JWT-based authentication that validates tokens before allowing access to /admin/* routes. Previously, these endpoints were accessible without authentication, posing a security risk.
+Add user authentication middleware to protect admin endpoints.
+
+This change implements JWT-based authentication that validates tokens before allowing access to /admin/* routes. Previously, these endpoints were accessible without authentication, posing a security risk.
 
 ---
 
