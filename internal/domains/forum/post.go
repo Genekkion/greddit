@@ -1,25 +1,99 @@
 package forum
 
 import (
+	"fmt"
 	"greddit/internal/domains/auth"
-	"time"
+	"greddit/internal/domains/shared"
+	"strings"
 
 	"github.com/google/uuid"
 )
 
-type PostId uuid.UUID
+const (
+	postMaxTitleLength = 128
+	postMaxBodyLength  = 1024 * 1024
+)
+
+type PostId = uuid.UUID
 
 // Post represents a post in a community.
 type Post struct {
-	Id        PostId     `json:"id"`
-	Title     string     `json:"title"`
-	Body      string     `json:"body"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
-	DeletedAt *time.Time `json:"deleted_at"`
+	shared.Base
 
-	UpvoteCount int `json:"upvote_count"`
+	PostMetadata
+	PostValue
+}
+
+// PostMetadata represents metadata about a post.
+type PostMetadata struct {
+	Id PostId `json:"id"`
 
 	PosterId    auth.UserId `json:"poster_id"`
 	CommunityId CommunityId `json:"community_id"`
+
+	UpvoteCount int `json:"upvote_count"`
+}
+
+// PostValue represents the value of a post.
+type PostValue struct {
+	Title string `json:"title"`
+	Body  string `json:"body"`
+}
+
+// Validate checks that the post value is valid.
+func (v PostValue) Validate() error {
+	title := v.Title
+	title = strings.TrimSpace(title)
+	if title == "" {
+		return InvalidPostParamsError{
+			reason: "title cannot be empty",
+		}
+	} else if len(title) > postMaxTitleLength {
+		return InvalidPostParamsError{
+			reason: fmt.Sprintf("title must be less than %d characters", postMaxTitleLength),
+		}
+	}
+
+	body := v.Body
+	body = strings.TrimSpace(body)
+	if body == "" {
+		return InvalidPostParamsError{
+			reason: "body cannot be empty",
+		}
+	} else if len(body) > postMaxBodyLength {
+		return InvalidPostParamsError{
+			fmt.Sprintf("body must be less than %d characters", postMaxBodyLength),
+		}
+	}
+
+	return nil
+}
+
+// InvalidPostParamsError is returned when a post is created with invalid parameters.
+type InvalidPostParamsError struct {
+	reason string
+}
+
+// Error implements the error interface.
+func (e InvalidPostParamsError) Error() string {
+	return "invalid post params: " + e.reason
+}
+
+// NewPost creates a new post.
+func NewPost(value PostValue, metadata PostMetadata, base shared.Base) (
+	post *Post, err error) {
+
+	err = value.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	post = &Post{
+		Base: base,
+
+		PostMetadata: metadata,
+		PostValue:    value,
+	}
+
+	return post, nil
 }
