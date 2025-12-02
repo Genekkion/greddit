@@ -1,6 +1,7 @@
 package forum
 
 import (
+	"greddit/internal/domains/auth"
 	"time"
 
 	"github.com/google/uuid"
@@ -17,5 +18,6 @@ type Comment struct {
 
 	Body string `json:"body"`
 
-	PostId PostId `json:"post_id"`
+	UserId auth.UserId `json:"user_id"`
+	PostId PostId      `json:"post_id"`
 }
