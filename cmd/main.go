@@ -43,3 +43,8 @@ func main() {
 
 	select {}
 }
+
+const (
+	exitUnknownError = iota
+	exitDbFailure
+)
