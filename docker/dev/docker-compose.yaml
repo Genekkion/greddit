@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:18.1-trixie
+    container_name: greddit_postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: greddit
+      POSTGRES_PASSWORD: greddit
+      POSTGRES_DB: greddit
+    volumes:
+      - ./data/postgres:/var/lib/postgresql
+    restart: unless-stopped
+
+  redis:
+    image: redis:8.2.2-bookworm
+    container_name: greddit_redis
+    ports:
+      - "6380:6379"
+    command: redis-server --save 20 1 --loglevel debug --requirepass greddit
+    volumes:
+      - ./data/redis:/data
+    restart: unless-stopped
