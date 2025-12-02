@@ -1,8 +1,9 @@
 package postgres
 
 import (
-	"greddit/internal/test"
 	"testing"
+
+	"greddit/internal/test"
 )
 
 func TestCreateTransaction(t *testing.T) {

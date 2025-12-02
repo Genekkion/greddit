@@ -2,8 +2,9 @@ package dbportsauth
 
 import (
 	"context"
-	"greddit/internal/domains/auth"
 	"time"
+
+	"greddit/internal/domains/auth"
 )
 
 // UsersRepo is a repository for users.

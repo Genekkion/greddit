@@ -1,8 +1,9 @@
 package auth
 
 import (
-	"greddit/internal/test"
 	"testing"
+
+	"greddit/internal/test"
 )
 
 func TestRoleValidate(t *testing.T) {

@@ -2,9 +2,10 @@ package postgres
 
 import (
 	"fmt"
-	"greddit/internal/test"
 	"testing"
 	"time"
+
+	"greddit/internal/test"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/testcontainers/testcontainers-go"

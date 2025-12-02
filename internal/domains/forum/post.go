@@ -2,9 +2,10 @@ package forum
 
 import (
 	"fmt"
+	"strings"
+
 	"greddit/internal/domains/auth"
 	"greddit/internal/domains/shared"
-	"strings"
 
 	"github.com/google/uuid"
 )
@@ -81,8 +82,8 @@ func (e InvalidPostParamsError) Error() string {
 
 // NewPost creates a new post.
 func NewPost(value PostValue, metadata PostMetadata, base shared.Base) (
-	post *Post, err error) {
-
+	post *Post, err error,
+) {
 	err = value.Validate()
 	if err != nil {
 		return nil, err

@@ -1,15 +1,14 @@
 package env
 
 import (
-	"greddit/internal/infra/log"
 	"os"
+
+	"greddit/internal/infra/log"
 )
 
-var (
-	// Over here, we use the default logger, but it can be swapped out for another safer one, if the default
-	// logger is overridden with one which depends on an environment variable.
-	logger = log.GetDefaultLogger()
-)
+// Over here, we use the default logger, but it can be swapped out for another safer one, if the default
+// logger is overridden with one which depends on an environment variable.
+var logger = log.GetDefaultLogger()
 
 // GetEnvOrDef returns the environment variable with the given key or the
 // default value if the environment variable is not set.

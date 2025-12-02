@@ -1,9 +1,10 @@
 package authdb
 
 import (
-	"greddit/internal/test"
 	"testing"
 	"time"
+
+	"greddit/internal/test"
 
 	"greddit/internal/domains/auth"
 	"greddit/internal/infra/db/postgres"

@@ -2,9 +2,10 @@ package authdb
 
 import (
 	"context"
+	"time"
+
 	"greddit/internal/domains/auth"
 	"greddit/internal/infra/db/postgres"
-	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

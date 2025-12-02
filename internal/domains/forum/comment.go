@@ -2,9 +2,10 @@ package forum
 
 import (
 	"fmt"
+	"strings"
+
 	"greddit/internal/domains/auth"
 	"greddit/internal/domains/shared"
-	"strings"
 
 	"github.com/google/uuid"
 )

@@ -1,10 +1,11 @@
 package auth
 
 import (
-	"greddit/internal/domains/shared"
-	"greddit/internal/test"
 	"testing"
 	"time"
+
+	"greddit/internal/domains/shared"
+	"greddit/internal/test"
 
 	"github.com/google/uuid"
 )

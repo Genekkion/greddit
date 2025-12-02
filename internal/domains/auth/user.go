@@ -2,9 +2,10 @@ package auth
 
 import (
 	"fmt"
-	"greddit/internal/domains/shared"
 	"strings"
 	"unicode"
+
+	"greddit/internal/domains/shared"
 
 	"github.com/google/uuid"
 )
@@ -32,12 +33,10 @@ const (
 	nameMaxLength = 32
 )
 
-var (
-	allowedUsernameChars = []*unicode.RangeTable{
-		unicode.Letter,
-		unicode.Digit,
-	}
-)
+var allowedUsernameChars = []*unicode.RangeTable{
+	unicode.Letter,
+	unicode.Digit,
+}
 
 // Validate checks that the user value is valid.
 func (v UserValue) Validate() (err error) {

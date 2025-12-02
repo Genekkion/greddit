@@ -6,7 +6,7 @@ on:
 
 jobs:
   test:
-    name: Run gofmt
+    name: Check format
     runs-on: ubuntu-latest
     env:
       GO_VERSION: '1.25.4'
@@ -20,10 +20,13 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
 
-      - name: Run gofmt
+      - name: Install gofumpt
+        run: go install mvdan.cc/gofumpt@v0.9.2
+
+      - name: Run gofumpt
         run: |
-          if [ -n "$(gofmt -l .)" ]; then
+          if [ -n "$(gofumpt -l .)" ]; then
             echo "Go files not properly formatted."
-            echo "Rune 'gofmt -w .' to fix."
+            echo "Rune 'gofumpt -w .' to fix."
             exit 1
           fi
