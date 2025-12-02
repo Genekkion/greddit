@@ -13,9 +13,12 @@ import (
 
 var (
 	postgresEnv = map[string]string{
-		"POSTGRES_USER":     "bastion",
-		"POSTGRES_PASSWORD": "bastion",
-		"POSTGRES_DB":       "bastion",
+		"POSTGRES_USER":     "greddit",
+		"POSTGRES_PASSWORD": "greddit",
+		"POSTGRES_DB":       "greddit",
+	}
+	tables = []string{
+		"auth_users",
 	}
 )
 
@@ -61,7 +64,10 @@ func NewTestPool(t *testing.T) (pool *pgxpool.Pool, cleanup func()) {
 		t.Fatalf("failed to get port")
 	}
 
-	connStr := fmt.Sprintf("postgresql://bastion:bastion@%s:%s/bastion?sslmode=disable", host, port.Port())
+	connStr := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable",
+		postgresEnv["POSTGRES_USER"], postgresEnv["POSTGRES_PASSWORD"],
+		host, port.Port(), postgresEnv["POSTGRES_DB"],
+	)
 
 	timeout := time.After(30 * time.Second)
 	tick := time.Tick(500 * time.Millisecond)
@@ -94,4 +100,16 @@ loop:
 		testcontainers.CleanupContainer(t, container)
 	}
 	return pool, cleanup
+}
+
+// ClearAllTables clears all tables in the database.
+func ClearAllTables(t *testing.T, pool *pgxpool.Pool) {
+	t.Helper()
+
+	for _, table := range tables {
+		stmt := fmt.Sprintf("TRUNCATE TABLE %s CASCADE", table)
+
+		_, err := pool.Exec(t.Context(), stmt)
+		test.NilErr(t, err)
+	}
 }
