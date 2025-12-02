@@ -4,13 +4,27 @@ import (
 	"context"
 	"log/slog"
 	"os"
+	"os/signal"
+	"strings"
+	"sync"
+	"syscall"
+
+	httpserver "greddit/internal/infra/http/server"
+
+	"greddit/internal/infra/http/routing"
 
 	"greddit/internal/env"
 	"greddit/internal/infra/db/postgres"
 	"greddit/internal/infra/log"
 )
 
-var pgConnStr = env.GetStringEnvOrFatal("PGSQL_CONN_STR")
+var (
+	isDev          = env.GetBoolEnvDef("IS_DEV", false)
+	httpAddr       = env.GetStringEnvDef("HTTP_ADDR", "127.0.0.1:3000")
+	allowedOrigins = strings.TrimSpace(env.GetStringEnvDef("ALLOWED_ORIGINS", "*"))
+
+	pgConnStr = env.GetStringEnvOrFatal("PGSQL_CONN_STR")
+)
 
 func main() {
 	defer log.CleanupDefaultLogger()
@@ -41,10 +55,55 @@ func main() {
 		os.Exit(exitDbFailure)
 	}
 
-	select {}
+	routingParam := routing.RouterParams{
+		Logger: logger,
+		IsDev:  isDev,
+	}
+	err = routingParam.Validate()
+	if err != nil {
+		logger.Error("Error validating router params",
+			"error",
+			err,
+		)
+		os.Exit(exitRoutingParamValidationFailure)
+	}
+
+	wg := sync.WaitGroup{}
+	errCh := make(chan error, 10)
+
+	wg.Go(func() {
+		opts := []httpserver.Option{
+			httpserver.WithAddress(httpAddr),
+			httpserver.WithAllowedOrigins(allowedOrigins),
+		}
+		svr, err := httpserver.New(routingParam, opts...)
+		if err != nil {
+			errCh <- err
+			return
+		}
+		errCh <- svr.Start(ctx)
+	})
+
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+
+	select {
+	case sig := <-sigCh:
+		logger.Info("Received os signal to terminate, shutting down services",
+			"signal", sig,
+		)
+	case err := <-errCh:
+		logger.Info("Received error from a service, shutting down all services",
+			"error", err,
+		)
+	}
+
+	cancel()
+	wg.Wait()
 }
 
 const (
 	exitUnknownError = iota
 	exitDbFailure
+	exitRoutingParamValidationFailure
 )
