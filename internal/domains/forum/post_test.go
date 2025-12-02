@@ -23,7 +23,6 @@ func TestNewPost(t *testing.T) {
 			Id:          uuid.New(),
 			PosterId:    uuid.New(),
 			CommunityId: uuid.New(),
-			UpvoteCount: 0,
 		}
 		tt := time.Date(2025, 10, 10, 12, 0, 0, 0, time.UTC)
 		base := shared.Base{
@@ -123,7 +122,6 @@ func TestNewPost(t *testing.T) {
 					Id:          uuid.New(),
 					PosterId:    uuid.New(),
 					CommunityId: uuid.New(),
-					UpvoteCount: 0,
 				}
 				tt := time.Date(2025, 10, 10, 12, 0, 0, 0, time.UTC)
 				base := shared.Base{

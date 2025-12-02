@@ -10,7 +10,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// CommunitiesRepo implements the dbforumports.CommunitiesRepo interface.
+// CommunitiesRepo implements the dbportsforum.CommunitiesRepo interface.
 type CommunitiesRepo struct {
 	postgres.BaseRepo
 }
