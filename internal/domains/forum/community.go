@@ -69,8 +69,7 @@ func (v CommunityValue) Validate() error {
 
 // CommunityMetadata represents metadata about a community.
 type CommunityMetadata struct {
-	Id          CommunityId `json:"id"`
-	MemberCount int         `json:"member_count"`
+	Id CommunityId `json:"id"`
 }
 
 // InvalidCommunityParamsError represents an error when creating a community with invalid parameters.
@@ -89,8 +88,6 @@ func NewCommunity(value CommunityValue, metadata CommunityMetadata, base shared.
 	if err != nil {
 		return nil, err
 	}
-
-	metadata.MemberCount = 0
 
 	community = &Community{
 		Base: base,
