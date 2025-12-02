@@ -2,7 +2,7 @@ package forum
 
 import (
 	"greddit/internal/domains/auth"
-	"time"
+	"greddit/internal/domains/shared"
 
 	"github.com/google/uuid"
 )
@@ -11,10 +11,9 @@ type CommentId uuid.UUID
 
 // Comment represents a comment on a post.
 type Comment struct {
-	Id        CommentId  `json:"id"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
-	DeletedAt *time.Time `json:"deleted_at"`
+	shared.Base
+
+	Id CommentId `json:"id"`
 
 	Body string `json:"body"`
 
