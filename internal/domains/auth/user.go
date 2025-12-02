@@ -43,6 +43,16 @@ func (e InvalidRoleError) Error() string {
 	return "invalid role value: " + e.value
 }
 
+// Validate checks that the role is valid.
+func (r Role) Validate() (err error) {
+	if !allowedRoles.Contains(r) {
+		return InvalidRoleError{
+			value: string(r),
+		}
+	}
+	return nil
+}
+
 // NewUser creates a new user.
 func NewUser(id UserId, role Role, base shared.Base) (user *User, err error) {
 	if !allowedRoles.Contains(role) {

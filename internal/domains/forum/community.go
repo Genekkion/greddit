@@ -1,6 +1,7 @@
 package forum
 
 import (
+	"fmt"
 	"greddit/internal/domains/shared"
 	"strings"
 	"unicode"
@@ -45,7 +46,7 @@ func NewCommunity(name string, description string, base shared.Base) (community 
 		}
 	} else if len(name) > communityMaxNameLength {
 		return nil, InvalidCommunityParamsError{
-			reason: "name must be less than " + string(communityMaxNameLength) + " characters",
+			reason: fmt.Sprintf("name must be less than %d characters", communityMaxNameLength),
 		}
 	}
 
@@ -59,7 +60,7 @@ func NewCommunity(name string, description string, base shared.Base) (community 
 	description = strings.TrimSpace(description)
 	if len(description) > communityMaxDescriptionLength {
 		return nil, InvalidCommunityParamsError{
-			reason: "description must be less than " + string(communityMaxDescriptionLength) + " characters",
+			reason: fmt.Sprintf("description must be less than %d characters", communityMaxDescriptionLength),
 		}
 	}
 

@@ -1,6 +1,7 @@
 package forum
 
 import (
+	"fmt"
 	"greddit/internal/domains/auth"
 	"greddit/internal/domains/shared"
 	"strings"
@@ -49,7 +50,7 @@ func (v PostValue) Validate() error {
 		}
 	} else if len(title) > postMaxTitleLength {
 		return InvalidPostParamsError{
-			reason: "title must be less than " + string(postMaxTitleLength) + " characters",
+			reason: fmt.Sprintf("title must be less than %d characters", postMaxTitleLength),
 		}
 	}
 
@@ -61,7 +62,7 @@ func (v PostValue) Validate() error {
 		}
 	} else if len(body) > postMaxBodyLength {
 		return InvalidPostParamsError{
-			reason: "body must be less than " + string(postMaxBodyLength) + " characters",
+			fmt.Sprintf("body must be less than %d characters", postMaxBodyLength),
 		}
 	}
 
