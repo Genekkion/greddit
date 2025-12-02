@@ -15,7 +15,7 @@ RUN CGO_ENABLED=0 \
     go build \
     -ldflags="-w -s" \
     -o greddit \
-    cmd/*.go
+    cmd/main.go
 
 FROM scratch
 
