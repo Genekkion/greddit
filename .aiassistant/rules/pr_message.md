@@ -4,6 +4,9 @@ apply: always
 
 # Pull Request Message Rule
 
+For context on changes made, use file `diff.log` for the git
+diffs between the source and target branches.
+
 ## Purpose
 This rule ensures that all pull request descriptions follow the project's standardized template and include all required information for proper review and documentation.
 
