@@ -5,6 +5,8 @@ import (
 	"io/fs"
 	"net/http"
 
+	"greddit/internal/infra/http/api"
+
 	"greddit/internal/infra/http/routing"
 	"greddit/internal/infra/http/util"
 )
@@ -26,8 +28,11 @@ func NewHandler(p routing.RouterParams) *http.ServeMux {
 		mux.Handle("/static/", http.StripPrefix("/static/",
 			http.FileServer(http.FS(sFs))),
 		)
-
 	}
+
+	httputil.AddSubRouters(mux, map[string]http.Handler{
+		"/api": api.New(p),
+	})
 
 	mux.HandleFunc("/health", httputil.Methods(map[string]http.HandlerFunc{
 		http.MethodGet: health,

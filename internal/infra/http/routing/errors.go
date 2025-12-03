@@ -5,8 +5,8 @@ type InvalidRouterParamError struct {
 	ParamName string
 }
 
-// NewInvalidRouterParamError creates a new InvalidRouterParamError.
-func NewInvalidRouterParamError(paramName string) InvalidRouterParamError {
+// newInvalidRouterParamError creates a new InvalidRouterParamError.
+func newInvalidRouterParamError(paramName string) InvalidRouterParamError {
 	return InvalidRouterParamError{
 		ParamName: paramName,
 	}

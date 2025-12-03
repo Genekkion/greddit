@@ -2,12 +2,19 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"os"
 	"os/signal"
 	"strings"
 	"sync"
 	"syscall"
+
+	authdb "greddit/internal/infra/db/postgres/auth"
+
+	servicesauth "greddit/internal/services/auth"
+
+	"greddit/internal/infra/auth/local/hs256"
 
 	httpserver "greddit/internal/infra/http/server"
 
@@ -22,6 +29,7 @@ var (
 	isDev          = env.GetBoolEnvDef("IS_DEV", false)
 	httpAddr       = env.GetStringEnvDef("HTTP_ADDR", "127.0.0.1:3000")
 	allowedOrigins = strings.TrimSpace(env.GetStringEnvDef("ALLOWED_ORIGINS", "*"))
+	keyFilePath    = env.GetStringEnvDef("KEY_FILE", "./key")
 
 	pgConnStr = env.GetStringEnvOrFatal("PGSQL_CONN_STR")
 )
@@ -32,15 +40,19 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	routingParam := routing.RouterParams{
+		IsDev: isDev,
+	}
+
 	logger := log.NewLogger(log.NewHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelDebug,
 	}))
+	routingParam.Logger = logger
 
 	pool, err := postgres.New(ctx, pgConnStr)
 	if err != nil {
 		logger.Error("Error creating postgres pool",
-			"error",
-			err,
+			"error", err,
 		)
 		os.Exit(exitDbFailure)
 	}
@@ -49,21 +61,53 @@ func main() {
 	err = postgres.Init(pool, ctx)
 	if err != nil {
 		logger.Error("Error initializing postgres pool",
-			"error",
-			err,
+			"error", err,
 		)
 		os.Exit(exitDbFailure)
 	}
 
-	routingParam := routing.RouterParams{
-		Logger: logger,
-		IsDev:  isDev,
+	{
+		secret, err := os.ReadFile(keyFilePath)
+		if err != nil && !errors.Is(err, os.ErrNotExist) {
+			logger.Error("Error opening key file",
+				"error", err,
+			)
+			os.Exit(exitKeyFailure)
+		}
+
+		if err != nil {
+			secret, err = hs256.NewSecret()
+			if err != nil {
+				logger.Error("Error generating secret",
+					"error", err,
+				)
+				os.Exit(exitKeyFailure)
+			}
+
+			err = os.WriteFile(keyFilePath, secret, 0o600)
+			if err != nil {
+				logger.Error("Error writing secret to file",
+					"error", err,
+				)
+			}
+		}
+
+		jwkSource, err := hs256.NewSource(secret)
+		if err != nil {
+			logger.Error("Error creating jwk source",
+				"error", err,
+			)
+			os.Exit(exitKeyFailure)
+		}
+		users := authdb.NewUsersRepo(pool)
+		ser := servicesauth.NewService(logger, jwkSource, users)
+		routingParam.AuthSer = &ser
 	}
+
 	err = routingParam.Validate()
 	if err != nil {
 		logger.Error("Error validating router params",
-			"error",
-			err,
+			"error", err,
 		)
 		os.Exit(exitRoutingParamValidationFailure)
 	}
@@ -106,4 +150,5 @@ const (
 	exitUnknownError = iota
 	exitDbFailure
 	exitRoutingParamValidationFailure
+	exitKeyFailure
 )
