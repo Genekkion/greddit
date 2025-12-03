@@ -38,26 +38,33 @@ var allowedUsernameChars = []*unicode.RangeTable{
 	unicode.Digit,
 }
 
+func ValidateUsername(username string) error {
+	username = strings.TrimSpace(username)
+	if username == "" {
+		return InvalidUserParamsError{
+			reason: "username cannot be empty",
+		}
+	} else if len(username) < nameMinLength || len(username) > nameMaxLength {
+		return InvalidUserParamsError{
+			reason: fmt.Sprintf("username must be between %d and %d characters", nameMinLength, nameMaxLength),
+		}
+	}
+	for _, r := range username {
+		if !unicode.IsOneOf(allowedUsernameChars, r) {
+			return InvalidUserParamsError{
+				reason: "username contains invalid characters",
+			}
+		}
+	}
+	return nil
+}
+
 // Validate checks that the user value is valid.
 func (v UserValue) Validate() (err error) {
 	{
-		username := v.Username
-		username = strings.TrimSpace(username)
-		if username == "" {
-			return InvalidUserParamsError{
-				reason: "username cannot be empty",
-			}
-		} else if len(username) < nameMinLength || len(username) > nameMaxLength {
-			return InvalidUserParamsError{
-				reason: fmt.Sprintf("username must be between %d and %d characters", nameMinLength, nameMaxLength),
-			}
-		}
-		for _, r := range username {
-			if !unicode.IsOneOf(allowedUsernameChars, r) {
-				return InvalidUserParamsError{
-					reason: "username contains invalid characters",
-				}
-			}
+		err = ValidateUsername(v.Username)
+		if err != nil {
+			return err
 		}
 	}
 
