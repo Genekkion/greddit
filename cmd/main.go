@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -28,6 +29,7 @@ var (
 	isDev          = env.GetBoolEnvDef("IS_DEV", false)
 	httpAddr       = env.GetStringEnvDef("HTTP_ADDR", "127.0.0.1:3000")
 	allowedOrigins = strings.TrimSpace(env.GetStringEnvDef("ALLOWED_ORIGINS", "*"))
+	keyFilePath    = env.GetStringEnvDef("KEY_FILE", "./key")
 
 	pgConnStr = env.GetStringEnvOrFatal("PGSQL_CONN_STR")
 )
@@ -50,8 +52,7 @@ func main() {
 	pool, err := postgres.New(ctx, pgConnStr)
 	if err != nil {
 		logger.Error("Error creating postgres pool",
-			"error",
-			err,
+			"error", err,
 		)
 		os.Exit(exitDbFailure)
 	}
@@ -60,26 +61,41 @@ func main() {
 	err = postgres.Init(pool, ctx)
 	if err != nil {
 		logger.Error("Error initializing postgres pool",
-			"error",
-			err,
+			"error", err,
 		)
 		os.Exit(exitDbFailure)
 	}
 
 	{
-		secret, err := hs256.NewSecret()
-		if err != nil {
-			logger.Error("Error generating secret",
-				"error",
-				err,
+		secret, err := os.ReadFile(keyFilePath)
+		if err != nil && !errors.Is(err, os.ErrNotExist) {
+			logger.Error("Error opening key file",
+				"error", err,
 			)
 			os.Exit(exitKeyFailure)
 		}
+
+		if err != nil {
+			secret, err = hs256.NewSecret()
+			if err != nil {
+				logger.Error("Error generating secret",
+					"error", err,
+				)
+				os.Exit(exitKeyFailure)
+			}
+
+			err = os.WriteFile(keyFilePath, secret, 0o600)
+			if err != nil {
+				logger.Error("Error writing secret to file",
+					"error", err,
+				)
+			}
+		}
+
 		jwkSource, err := hs256.NewSource(secret)
 		if err != nil {
 			logger.Error("Error creating jwk source",
-				"error",
-				err,
+				"error", err,
 			)
 			os.Exit(exitKeyFailure)
 		}
@@ -91,8 +107,7 @@ func main() {
 	err = routingParam.Validate()
 	if err != nil {
 		logger.Error("Error validating router params",
-			"error",
-			err,
+			"error", err,
 		)
 		os.Exit(exitRoutingParamValidationFailure)
 	}
