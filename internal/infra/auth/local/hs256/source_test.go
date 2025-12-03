@@ -1,7 +1,6 @@
 package hs256
 
 import (
-	"crypto/rand"
 	"testing"
 	"time"
 
@@ -13,8 +12,7 @@ import (
 func newTestSource(t *testing.T) Source {
 	t.Helper()
 
-	b := make([]byte, 32)
-	_, err := rand.Read(b)
+	b, err := NewSecret()
 	test.NilErr(t, err)
 
 	source, err := NewSource(b)

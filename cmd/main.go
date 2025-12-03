@@ -9,6 +9,10 @@ import (
 	"sync"
 	"syscall"
 
+	servicesauth "greddit/internal/services/auth"
+
+	"greddit/internal/infra/auth/local/hs256"
+
 	httpserver "greddit/internal/infra/http/server"
 
 	"greddit/internal/infra/http/routing"
@@ -32,9 +36,14 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	routingParam := routing.RouterParams{
+		IsDev: isDev,
+	}
+
 	logger := log.NewLogger(log.NewHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelDebug,
 	}))
+	routingParam.Logger = logger
 
 	pool, err := postgres.New(ctx, pgConnStr)
 	if err != nil {
@@ -55,10 +64,27 @@ func main() {
 		os.Exit(exitDbFailure)
 	}
 
-	routingParam := routing.RouterParams{
-		Logger: logger,
-		IsDev:  isDev,
+	{
+		secret, err := hs256.NewSecret()
+		if err != nil {
+			logger.Error("Error generating secret",
+				"error",
+				err,
+			)
+			os.Exit(exitKeyFailure)
+		}
+		jwkSource, err := hs256.NewSource(secret)
+		if err != nil {
+			logger.Error("Error creating jwk source",
+				"error",
+				err,
+			)
+			os.Exit(exitKeyFailure)
+		}
+		ser := servicesauth.NewService(jwkSource)
+		routingParam.AuthSer = &ser
 	}
+
 	err = routingParam.Validate()
 	if err != nil {
 		logger.Error("Error validating router params",
@@ -106,4 +132,5 @@ const (
 	exitUnknownError = iota
 	exitDbFailure
 	exitRoutingParamValidationFailure
+	exitKeyFailure
 )
