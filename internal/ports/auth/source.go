@@ -16,5 +16,5 @@ type JwkSource interface {
 	GetJwkSet(ctx context.Context) (set jwk.Set, err error)
 
 	// Validate validates a token.
-	Validate(signed []byte) (token jwt.Token, err error)
+	Validate(ctx context.Context, signed []byte) (token jwt.Token, err error)
 }

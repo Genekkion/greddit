@@ -42,10 +42,10 @@ func (s Source) Sign(token jwt.Token) (signed []byte, err error) {
 	return jwt.Sign(token, jwt.WithKey(jwa.HS256(), s.key))
 }
 
-func (s Source) GetJwkSet(ctx context.Context) (set jwk.Set, err error) {
+func (s Source) GetJwkSet(_ context.Context) (set jwk.Set, err error) {
 	return s.jwkSet, nil
 }
 
-func (s Source) Validate(signed []byte) (token jwt.Token, err error) {
+func (s Source) Validate(_ context.Context, signed []byte) (token jwt.Token, err error) {
 	return jwt.Parse(signed, jwt.WithKeySet(s.jwkSet))
 }
