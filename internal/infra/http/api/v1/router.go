@@ -9,6 +9,7 @@ import (
 	"greddit/internal/infra/http/routing"
 )
 
+// ApiRoutes creates a new router with the api routes.
 func ApiRoutes(p routing.RouterParams) (mux *http.ServeMux) {
 	mux = http.NewServeMux()
 

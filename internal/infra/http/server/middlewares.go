@@ -29,8 +29,8 @@ func LoggerMiddleware(handler http.Handler, logger *slog.Logger) http.Handler {
 	})
 }
 
-// corsMiddleware adds CORS headers to the response.
-func corsMiddleware(handler http.Handler, allowedOrigins string) http.Handler {
+// CorsMiddleware adds CORS headers to the response.
+func CorsMiddleware(handler http.Handler, allowedOrigins string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", allowedOrigins)
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")

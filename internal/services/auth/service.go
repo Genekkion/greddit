@@ -111,7 +111,7 @@ func (s Service) ExtractClaims(ctx context.Context, token []byte) (claims *Token
 	claims = &TokenClaims{}
 	err = json.Unmarshal([]byte(cStr), claims)
 	if err != nil {
-		s.logger.ErrorContext(ctx, "auth.service :: Error unmarshaling claims from JWT token",
+		s.logger.ErrorContext(ctx, "auth.service :: Error unmarshalling claims from JWT token",
 			"error", err,
 		)
 		return nil, err

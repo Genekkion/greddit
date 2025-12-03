@@ -36,7 +36,7 @@ func New(p routing.RouterParams, opts ...Option) (*Server, error) {
 	mux := NewHandler(p)
 	s.handler = LoggerMiddleware(mux, p.Logger)
 
-	s.handler = corsMiddleware(s.handler, config.allowedOrigins)
+	s.handler = CorsMiddleware(s.handler, config.allowedOrigins)
 
 	s.handler = TracerMiddleware(s.handler)
 
