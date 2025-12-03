@@ -10,7 +10,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// UsersRepo implements the forumports.UsersRepo interface.
+// UsersRepo implements the dbportsauth.UsersRepo interface.
 type UsersRepo struct {
 	postgres.BaseRepo
 }
@@ -46,16 +46,33 @@ func (r UsersRepo) GetUserById(ctx context.Context, id auth.UserId) (user *auth.
 	const stmt = "SELECT username, display_name, role, created_at, updated_at, deleted_at FROM auth_users WHERE id = $1"
 	args := []any{id}
 
-	user = &auth.User{}
-	user.Id = id
+	user = &auth.User{
+		UserMetadata: auth.UserMetadata{
+			Id: id,
+		},
+	}
 
 	err = r.QueryRow(ctx, stmt, args...).Scan(
-		&user.Username,
-		&user.DisplayName,
-		&user.Role,
-		&user.Base.CreatedAt,
-		&user.Base.UpdatedAt,
-		&user.Base.DeletedAt,
+		&user.Username, &user.DisplayName, &user.Role, &user.Base.CreatedAt, &user.Base.UpdatedAt, &user.Base.DeletedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (r UsersRepo) GetUserByUsername(ctx context.Context, username string) (user *auth.User, err error) {
+	const stmt = "SELECT id, display_name, role, created_at, updated_at, deleted_at FROM auth_users WHERE username = $1"
+	args := []any{username}
+	user = &auth.User{
+		UserValue: auth.UserValue{
+			Username: username,
+		},
+	}
+
+	err = r.QueryRow(ctx, stmt, args...).Scan(
+		&user.UserMetadata.Id, &user.DisplayName, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt,
 	)
 	if err != nil {
 		return nil, err
