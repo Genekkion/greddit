@@ -15,6 +15,7 @@ const (
 	CtxAuth CtxAuthKey = iota
 )
 
+// AuthMiddleware extracts the claims from the request and adds them to the context.
 func AuthMiddleware(handler http.Handler, ser servicesauth.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		claims, err := ser.ExtractClaims(r.Context(), []byte(r.Header.Get("Authorization")))
@@ -29,6 +30,8 @@ func AuthMiddleware(handler http.Handler, ser servicesauth.Service) http.Handler
 	})
 }
 
+// GetClaims returns the claims from the context. Warning: to be used only
+// if the above middleware has been applied to the request.
 func GetClaims(r *http.Request) servicesauth.TokenClaims {
 	v := r.Context().Value(CtxAuth)
 	vv, ok := v.(servicesauth.TokenClaims)

@@ -12,11 +12,13 @@ import (
 	servicesauth "greddit/internal/services/auth"
 )
 
+// AuthRouter is a router for the auth endpoints.
 type AuthRouter struct {
 	logger *slog.Logger
 	ser    servicesauth.Service
 }
 
+// AuthRoutes returns the routes for the auth endpoints.
 func AuthRoutes(p routing.RouterParams) (mux *http.ServeMux) {
 	mux = http.NewServeMux()
 
@@ -36,6 +38,7 @@ func AuthRoutes(p routing.RouterParams) (mux *http.ServeMux) {
 	return mux
 }
 
+// login signs a JWT token for the given username.
 func (rtr AuthRouter) login(w http.ResponseWriter, r *http.Request) {
 	var reqBody struct {
 		Username string `json:"username"`
@@ -65,6 +68,7 @@ func (rtr AuthRouter) login(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// checkAuth checks the validity of the JWT token in the Authorization header.
 func (rtr AuthRouter) checkAuth(w http.ResponseWriter, r *http.Request) {
 	value := r.Header.Get("Authorization")
 	if value == "" {
