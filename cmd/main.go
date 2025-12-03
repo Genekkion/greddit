@@ -9,6 +9,8 @@ import (
 	"sync"
 	"syscall"
 
+	authdb "greddit/internal/infra/db/postgres/auth"
+
 	servicesauth "greddit/internal/services/auth"
 
 	"greddit/internal/infra/auth/local/hs256"
@@ -81,7 +83,8 @@ func main() {
 			)
 			os.Exit(exitKeyFailure)
 		}
-		ser := servicesauth.NewService(jwkSource)
+		users := authdb.NewUsersRepo(pool)
+		ser := servicesauth.NewService(logger, jwkSource, users)
 		routingParam.AuthSer = &ser
 	}
 

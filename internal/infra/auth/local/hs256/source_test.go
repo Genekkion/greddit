@@ -53,7 +53,7 @@ func TestSource_SignValidate(t *testing.T) {
 	b, err := source.Sign(token)
 	test.NilErr(t, err)
 
-	token, err = source.Validate(b)
+	token, err = source.Validate(t.Context(), b)
 	test.NilErr(t, err)
 
 	tt, ok := token.IssuedAt()

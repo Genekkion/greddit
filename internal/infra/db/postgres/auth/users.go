@@ -72,7 +72,7 @@ func (r UsersRepo) GetUserByUsername(ctx context.Context, username string) (user
 	}
 
 	err = r.QueryRow(ctx, stmt, args...).Scan(
-		&user.UserMetadata.Id, &user.DisplayName, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt,
+		&user.UserMetadata.Id, &user.DisplayName, &user.Role, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt,
 	)
 	if err != nil {
 		return nil, err
