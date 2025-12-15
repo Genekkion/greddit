@@ -42,7 +42,7 @@ jobs:
           outputs: type=docker,dest=/tmp/greddit-image.tar
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: docker-image
           path: /tmp/greddit-image.tar
